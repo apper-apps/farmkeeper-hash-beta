@@ -49,12 +49,13 @@ export const cropService = {
     return crops.filter(c => c.farmId === parseInt(farmId, 10))
   },
 
-  async create(cropData) {
+async create(cropData) {
     await delay(400)
     const crops = loadFromStorage()
     const newCrop = {
       ...cropData,
       Id: getNextId(crops),
+      photos: cropData.photos || [],
       createdAt: new Date().toISOString()
     }
     crops.push(newCrop)
@@ -62,7 +63,7 @@ export const cropService = {
     return { ...newCrop }
   },
 
-  async update(id, cropData) {
+async update(id, cropData) {
     await delay(400)
     const crops = loadFromStorage()
     const index = crops.findIndex(c => c.Id === parseInt(id, 10))
@@ -73,7 +74,8 @@ export const cropService = {
     const updatedCrop = {
       ...crops[index],
       ...cropData,
-      Id: crops[index].Id
+      Id: crops[index].Id,
+      photos: cropData.photos || crops[index].photos || []
     }
     crops[index] = updatedCrop
     saveToStorage(crops)

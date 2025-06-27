@@ -49,12 +49,13 @@ export const expenseService = {
     return expenses.filter(e => e.farmId === parseInt(farmId, 10))
   },
 
-  async create(expenseData) {
+async create(expenseData) {
     await delay(400)
     const expenses = loadFromStorage()
     const newExpense = {
       ...expenseData,
       Id: getNextId(expenses),
+      photos: expenseData.photos || [],
       createdAt: new Date().toISOString()
     }
     expenses.push(newExpense)
@@ -62,7 +63,7 @@ export const expenseService = {
     return { ...newExpense }
   },
 
-  async update(id, expenseData) {
+async update(id, expenseData) {
     await delay(400)
     const expenses = loadFromStorage()
     const index = expenses.findIndex(e => e.Id === parseInt(id, 10))
@@ -73,7 +74,8 @@ export const expenseService = {
     const updatedExpense = {
       ...expenses[index],
       ...expenseData,
-      Id: expenses[index].Id
+      Id: expenses[index].Id,
+      photos: expenseData.photos || expenses[index].photos || []
     }
     expenses[index] = updatedExpense
     saveToStorage(expenses)

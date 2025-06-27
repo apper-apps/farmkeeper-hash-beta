@@ -4,6 +4,7 @@ import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import Select from '@/components/atoms/Select'
 import { cropService } from '@/services/api/cropService'
+import PhotoUpload from '@/components/molecules/PhotoUpload'
 
 const CropForm = ({ crop, farms, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -13,7 +14,8 @@ const CropForm = ({ crop, farms, onSuccess, onCancel }) => {
     plantingDate: crop?.plantingDate || '',
     expectedHarvest: crop?.expectedHarvest || '',
     status: crop?.status || 'planning',
-    notes: crop?.notes || ''
+    notes: crop?.notes || '',
+    photos: crop?.photos || []
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState({})
@@ -67,13 +69,13 @@ const CropForm = ({ crop, farms, onSuccess, onCancel }) => {
     
     if (!validateForm()) return
 
-    setIsSubmitting(true)
+setIsSubmitting(true)
     try {
       const cropData = {
         ...formData,
-        farmId: parseInt(formData.farmId, 10)
+        farmId: parseInt(formData.farmId, 10),
+        photos: formData.photos
       }
-
       let result
       if (crop) {
         result = await cropService.update(crop.Id, cropData)
@@ -172,10 +174,16 @@ const CropForm = ({ crop, farms, onSuccess, onCancel }) => {
           onChange={handleChange('notes')}
           rows={3}
           className="block w-full px-3 py-2 border border-surface-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors duration-200"
-          placeholder="Add any additional notes about this crop..."
+placeholder="Add any additional notes about this crop..."
         />
       </div>
 
+      <PhotoUpload
+        photos={formData.photos}
+        onChange={(photos) => setFormData(prev => ({ ...prev, photos }))}
+        label="Crop Photos"
+        maxFiles={5}
+      />
       <div className="flex gap-3 pt-4 border-t border-surface-200">
         <Button
           type="submit"

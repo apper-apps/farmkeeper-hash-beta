@@ -4,6 +4,7 @@ import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import Select from '@/components/atoms/Select'
 import { expenseService } from '@/services/api/expenseService'
+import PhotoUpload from '@/components/molecules/PhotoUpload'
 
 const ExpenseForm = ({ expense, farms, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -12,7 +13,8 @@ const ExpenseForm = ({ expense, farms, onSuccess, onCancel }) => {
     amount: expense?.amount || '',
     date: expense?.date || new Date().toISOString().split('T')[0],
     description: expense?.description || '',
-    vendor: expense?.vendor || ''
+    vendor: expense?.vendor || '',
+    photos: expense?.photos || []
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState({})
@@ -66,12 +68,13 @@ const ExpenseForm = ({ expense, farms, onSuccess, onCancel }) => {
     
     if (!validateForm()) return
 
-    setIsSubmitting(true)
+setIsSubmitting(true)
     try {
       const expenseData = {
         ...formData,
         farmId: parseInt(formData.farmId, 10),
-        amount: parseFloat(formData.amount)
+        amount: parseFloat(formData.amount),
+        photos: formData.photos
       }
 
       let result
@@ -165,7 +168,14 @@ const ExpenseForm = ({ expense, farms, onSuccess, onCancel }) => {
         value={formData.vendor}
         onChange={handleChange('vendor')}
         placeholder="e.g., Farmers Supply Co"
-        icon="Store"
+icon="Store"
+      />
+
+      <PhotoUpload
+        photos={formData.photos}
+        onChange={(photos) => setFormData(prev => ({ ...prev, photos }))}
+        label="Receipt Photos"
+        maxFiles={3}
       />
 
       <div className="flex gap-3 pt-4 border-t border-surface-200">
