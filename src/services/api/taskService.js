@@ -1,9 +1,4 @@
-import React from "react";
 import { delay } from "@/services/utils";
-import { delay } from "@/services/mockData/crops.json";
-import { delay } from "@/services/mockData/tasks.json";
-import { delay } from "@/services/mockData/expenses.json";
-import { delay } from "@/services/mockData/farms.json";
 export const taskService = {
   async getAll() {
     try {
