@@ -1,89 +1,198 @@
-import { delay } from '@/services/utils'
-
-const STORAGE_KEY = 'farmkeeper_farms'
-
-const loadFromStorage = () => {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY)
-    return data ? JSON.parse(data) : []
-  } catch (error) {
-    console.error('Error loading farms from storage:', error)
-    return []
-  }
-}
-
-const saveToStorage = (farms) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(farms))
-  } catch (error) {
-    console.error('Error saving farms to storage:', error)
-    throw new Error('Failed to save farm data')
-  }
-}
-
-const getNextId = (farms) => {
-  if (farms.length === 0) return 1
-  return Math.max(...farms.map(farm => farm.Id)) + 1
-}
-
 export const farmService = {
   async getAll() {
-    await delay(300)
-    const farms = loadFromStorage()
-    return [...farms]
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      const params = {
+        fields: [
+          { field: { "Name": "Name" } },
+          { field: { "Name": "location" } },
+          { field: { "Name": "size" } },
+          { field: { "Name": "unit" } },
+          { field: { "Name": "createdAt" } }
+        ]
+      }
+      
+      const response = await apperClient.fetchRecords('farm', params)
+      
+      if (!response || !response.data) {
+        return []
+      }
+      
+      return response.data || []
+    } catch (error) {
+      console.error('Error fetching farms:', error)
+      throw error
+    }
   },
 
   async getById(id) {
-    await delay(200)
-    const farms = loadFromStorage()
-    const farm = farms.find(f => f.Id === parseInt(id, 10))
-    if (!farm) {
-      throw new Error('Farm not found')
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      const params = {
+        fields: [
+          { field: { "Name": "Name" } },
+          { field: { "Name": "location" } },
+          { field: { "Name": "size" } },
+          { field: { "Name": "unit" } },
+          { field: { "Name": "createdAt" } }
+        ]
+      }
+      
+      const response = await apperClient.getRecordById('farm', parseInt(id, 10), params)
+      
+      if (!response || !response.data) {
+        throw new Error('Farm not found')
+      }
+      
+      return response.data
+    } catch (error) {
+      console.error('Error fetching farm:', error)
+      throw error
     }
-    return { ...farm }
   },
 
   async create(farmData) {
-    await delay(400)
-    const farms = loadFromStorage()
-    const newFarm = {
-      ...farmData,
-      Id: getNextId(farms),
-      createdAt: new Date().toISOString()
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      // Only include Updateable fields
+      const farmRecord = {
+        Name: farmData.name || farmData.Name,
+        location: farmData.location,
+        size: farmData.size,
+        unit: farmData.unit,
+        createdAt: new Date().toISOString()
+      }
+      
+      const params = {
+        records: [farmRecord]
+      }
+      
+      const response = await apperClient.createRecord('farm', params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        throw new Error(response.message)
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success)
+        const failedRecords = response.results.filter(result => !result.success)
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create ${failedRecords.length} records:${JSON.stringify(failedRecords)}`)
+          throw new Error(failedRecords[0]?.message || 'Failed to create farm')
+        }
+        
+        if (successfulRecords.length > 0) {
+          return successfulRecords[0].data
+        }
+      }
+      
+      throw new Error('No data returned from create operation')
+    } catch (error) {
+      console.error('Error creating farm:', error)
+      throw error
     }
-    farms.push(newFarm)
-    saveToStorage(farms)
-    return { ...newFarm }
   },
 
   async update(id, farmData) {
-    await delay(400)
-    const farms = loadFromStorage()
-    const index = farms.findIndex(f => f.Id === parseInt(id, 10))
-    if (index === -1) {
-      throw new Error('Farm not found')
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      // Only include Updateable fields
+      const farmRecord = {
+        Id: parseInt(id, 10),
+        Name: farmData.name || farmData.Name,
+        location: farmData.location,
+        size: farmData.size,
+        unit: farmData.unit
+      }
+      
+      const params = {
+        records: [farmRecord]
+      }
+      
+      const response = await apperClient.updateRecord('farm', params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        throw new Error(response.message)
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success)
+        const failedRecords = response.results.filter(result => !result.success)
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update ${failedRecords.length} records:${JSON.stringify(failedRecords)}`)
+          throw new Error(failedRecords[0]?.message || 'Failed to update farm')
+        }
+        
+        if (successfulRecords.length > 0) {
+          return successfulRecords[0].data
+        }
+      }
+      
+      throw new Error('No data returned from update operation')
+    } catch (error) {
+      console.error('Error updating farm:', error)
+      throw error
     }
-    
-    const updatedFarm = {
-      ...farms[index],
-      ...farmData,
-      Id: farms[index].Id // Prevent ID modification
-    }
-    farms[index] = updatedFarm
-    saveToStorage(farms)
-    return { ...updatedFarm }
   },
 
   async delete(id) {
-    await delay(300)
-    const farms = loadFromStorage()
-    const index = farms.findIndex(f => f.Id === parseInt(id, 10))
-    if (index === -1) {
-      throw new Error('Farm not found')
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      const params = {
+        RecordIds: [parseInt(id, 10)]
+      }
+      
+      const response = await apperClient.deleteRecord('farm', params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        throw new Error(response.message)
+      }
+      
+      if (response.results) {
+        const failedDeletions = response.results.filter(result => !result.success)
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`)
+          throw new Error(failedDeletions[0]?.message || 'Failed to delete farm')
+        }
+        
+        return true
+      }
+      
+      return true
+    } catch (error) {
+      console.error('Error deleting farm:', error)
+      throw error
     }
-    
-    farms.splice(index, 1)
-    saveToStorage(farms)
-    return true
   }
 }

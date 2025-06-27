@@ -71,10 +71,15 @@ const CropForm = ({ crop, farms, onSuccess, onCancel }) => {
 
 setIsSubmitting(true)
     try {
-      const cropData = {
-        ...formData,
-        farmId: parseInt(formData.farmId, 10),
-        photos: formData.photos
+const cropData = {
+        name: formData.name,
+        field: formData.field,
+        plantingDate: formData.plantingDate,
+        expectedHarvest: formData.expectedHarvest,
+        status: formData.status,
+        notes: formData.notes,
+        photos: formData.photos,
+        farmId: parseInt(formData.farmId, 10)
       }
       let result
       if (crop) {

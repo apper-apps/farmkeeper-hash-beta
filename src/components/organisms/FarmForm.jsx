@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { toast } from 'react-toastify'
-import Button from '@/components/atoms/Button'
-import Input from '@/components/atoms/Input'
-import Select from '@/components/atoms/Select'
-import { farmService } from '@/services/api/farmService'
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { farmService } from "@/services/api/farmService";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
 
 const FarmForm = ({ farm, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -46,11 +46,14 @@ const FarmForm = ({ farm, onSuccess, onCancel }) => {
     
     if (!validateForm()) return
 
-    setIsSubmitting(true)
+setIsSubmitting(true)
+    
     try {
       const farmData = {
-        ...formData,
-        size: parseFloat(formData.size)
+        name: formData.name,
+        location: formData.location,
+        size: parseFloat(formData.size),
+        unit: formData.unit
       }
 
       let result

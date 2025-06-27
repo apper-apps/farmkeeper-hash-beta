@@ -1,97 +1,252 @@
-import { delay } from '@/services/utils'
-
-const STORAGE_KEY = 'farmkeeper_crops'
-
-const loadFromStorage = () => {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY)
-    return data ? JSON.parse(data) : []
-  } catch (error) {
-    console.error('Error loading crops from storage:', error)
-    return []
-  }
-}
-
-const saveToStorage = (crops) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(crops))
-  } catch (error) {
-    console.error('Error saving crops to storage:', error)
-    throw new Error('Failed to save crop data')
-  }
-}
-
-const getNextId = (crops) => {
-  if (crops.length === 0) return 1
-  return Math.max(...crops.map(crop => crop.Id)) + 1
-}
-
 export const cropService = {
   async getAll() {
-    await delay(300)
-    const crops = loadFromStorage()
-    return [...crops]
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      const params = {
+        fields: [
+          { field: { "Name": "Name" } },
+          { field: { "Name": "field" } },
+          { field: { "Name": "plantingDate" } },
+          { field: { "Name": "expectedHarvest" } },
+          { field: { "Name": "status" } },
+          { field: { "Name": "notes" } },
+          { field: { "Name": "photos" } },
+          { field: { "Name": "farmId" } }
+        ]
+      }
+      
+      const response = await apperClient.fetchRecords('crop', params)
+      
+      if (!response || !response.data) {
+        return []
+      }
+      
+      return response.data || []
+    } catch (error) {
+      console.error('Error fetching crops:', error)
+      throw error
+    }
   },
 
   async getById(id) {
-    await delay(200)
-    const crops = loadFromStorage()
-    const crop = crops.find(c => c.Id === parseInt(id, 10))
-    if (!crop) {
-      throw new Error('Crop not found')
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      const params = {
+        fields: [
+          { field: { "Name": "Name" } },
+          { field: { "Name": "field" } },
+          { field: { "Name": "plantingDate" } },
+          { field: { "Name": "expectedHarvest" } },
+          { field: { "Name": "status" } },
+          { field: { "Name": "notes" } },
+          { field: { "Name": "photos" } },
+          { field: { "Name": "farmId" } }
+        ]
+      }
+      
+      const response = await apperClient.getRecordById('crop', parseInt(id, 10), params)
+      
+      if (!response || !response.data) {
+        throw new Error('Crop not found')
+      }
+      
+      return response.data
+    } catch (error) {
+      console.error('Error fetching crop:', error)
+      throw error
     }
-    return { ...crop }
   },
 
   async getByFarmId(farmId) {
-    await delay(250)
-    const crops = loadFromStorage()
-    return crops.filter(c => c.farmId === parseInt(farmId, 10))
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      const params = {
+        fields: [
+          { field: { "Name": "Name" } },
+          { field: { "Name": "field" } },
+          { field: { "Name": "plantingDate" } },
+          { field: { "Name": "expectedHarvest" } },
+          { field: { "Name": "status" } },
+          { field: { "Name": "notes" } },
+          { field: { "Name": "photos" } },
+          { field: { "Name": "farmId" } }
+        ],
+        where: [
+          {
+            "FieldName": "farmId",
+            "Operator": "EqualTo",
+            "Values": [parseInt(farmId, 10)]
+          }
+        ]
+      }
+      
+      const response = await apperClient.fetchRecords('crop', params)
+      
+      if (!response || !response.data) {
+        return []
+      }
+      
+      return response.data || []
+    } catch (error) {
+      console.error('Error fetching crops by farm ID:', error)
+      throw error
+    }
   },
 
-async create(cropData) {
-    await delay(400)
-    const crops = loadFromStorage()
-    const newCrop = {
-      ...cropData,
-      Id: getNextId(crops),
-      photos: cropData.photos || [],
-      createdAt: new Date().toISOString()
+  async create(cropData) {
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      // Only include Updateable fields
+      const cropRecord = {
+        Name: cropData.name || cropData.Name,
+        field: cropData.field,
+        plantingDate: cropData.plantingDate,
+        expectedHarvest: cropData.expectedHarvest,
+        status: cropData.status,
+        notes: cropData.notes,
+        photos: cropData.photos || "",
+        farmId: parseInt(cropData.farmId, 10)
+      }
+      
+      const params = {
+        records: [cropRecord]
+      }
+      
+      const response = await apperClient.createRecord('crop', params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        throw new Error(response.message)
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success)
+        const failedRecords = response.results.filter(result => !result.success)
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create ${failedRecords.length} records:${JSON.stringify(failedRecords)}`)
+          throw new Error(failedRecords[0]?.message || 'Failed to create crop')
+        }
+        
+        if (successfulRecords.length > 0) {
+          return successfulRecords[0].data
+        }
+      }
+      
+      throw new Error('No data returned from create operation')
+    } catch (error) {
+      console.error('Error creating crop:', error)
+      throw error
     }
-    crops.push(newCrop)
-    saveToStorage(crops)
-    return { ...newCrop }
   },
 
-async update(id, cropData) {
-    await delay(400)
-    const crops = loadFromStorage()
-    const index = crops.findIndex(c => c.Id === parseInt(id, 10))
-    if (index === -1) {
-      throw new Error('Crop not found')
+  async update(id, cropData) {
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      // Only include Updateable fields
+      const cropRecord = {
+        Id: parseInt(id, 10),
+        Name: cropData.name || cropData.Name,
+        field: cropData.field,
+        plantingDate: cropData.plantingDate,
+        expectedHarvest: cropData.expectedHarvest,
+        status: cropData.status,
+        notes: cropData.notes,
+        photos: cropData.photos || "",
+        farmId: parseInt(cropData.farmId, 10)
+      }
+      
+      const params = {
+        records: [cropRecord]
+      }
+      
+      const response = await apperClient.updateRecord('crop', params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        throw new Error(response.message)
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success)
+        const failedRecords = response.results.filter(result => !result.success)
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update ${failedRecords.length} records:${JSON.stringify(failedRecords)}`)
+          throw new Error(failedRecords[0]?.message || 'Failed to update crop')
+        }
+        
+        if (successfulRecords.length > 0) {
+          return successfulRecords[0].data
+        }
+      }
+      
+      throw new Error('No data returned from update operation')
+    } catch (error) {
+      console.error('Error updating crop:', error)
+      throw error
     }
-    
-    const updatedCrop = {
-      ...crops[index],
-      ...cropData,
-      Id: crops[index].Id,
-      photos: cropData.photos || crops[index].photos || []
-    }
-    crops[index] = updatedCrop
-    saveToStorage(crops)
-    return { ...updatedCrop }
   },
 
   async delete(id) {
-    await delay(300)
-    const crops = loadFromStorage()
-    const index = crops.findIndex(c => c.Id === parseInt(id, 10))
-    if (index === -1) {
-      throw new Error('Crop not found')
+    try {
+      const { ApperClient } = window.ApperSDK
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+      
+      const params = {
+        RecordIds: [parseInt(id, 10)]
+      }
+      
+      const response = await apperClient.deleteRecord('crop', params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        throw new Error(response.message)
+      }
+      
+      if (response.results) {
+        const failedDeletions = response.results.filter(result => !result.success)
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`)
+          throw new Error(failedDeletions[0]?.message || 'Failed to delete crop')
+        }
+        
+        return true
+      }
+      
+      return true
+    } catch (error) {
+      console.error('Error deleting crop:', error)
+      throw error
     }
-    
-    crops.splice(index, 1)
-    saveToStorage(crops)
-    return true
   }
 }

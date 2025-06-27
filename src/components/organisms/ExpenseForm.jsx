@@ -70,11 +70,13 @@ const ExpenseForm = ({ expense, farms, onSuccess, onCancel }) => {
 
 setIsSubmitting(true)
     try {
-      const expenseData = {
-        ...formData,
-        farmId: parseInt(formData.farmId, 10),
+const expenseData = {
+        category: formData.category,
         amount: parseFloat(formData.amount),
-        photos: formData.photos
+        date: formData.date,
+        description: formData.description,
+        vendor: formData.vendor,
+        farmId: parseInt(formData.farmId, 10)
       }
 
       let result

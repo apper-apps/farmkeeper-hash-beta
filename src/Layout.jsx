@@ -1,13 +1,23 @@
-import { useState } from 'react'
-import { Outlet, NavLink, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import ApperIcon from '@/components/ApperIcon'
-import { routeArray } from '@/config/routes'
+import React, { useState } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import "@/index.css";
+import { routeArray } from "@/config/routes";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/Button";
 
 const Layout = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const location = useLocation()
-
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  
+  // Mock authentication state - replace with actual auth context
+  const isAuthenticated = false;
+  const user = null;
+  
+  const handleLogout = () => {
+    // Implement logout logic
+    console.log('Logout clicked');
+  };
   const closeMobileMenu = () => setIsMobileMenuOpen(false)
 
   return (
@@ -30,7 +40,23 @@ const Layout = () => {
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
+<div className="flex items-center gap-3">
+            {isAuthenticated && user && (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span className="hidden sm:inline">Welcome, {user.firstName || user.emailAddress}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  icon="LogOut"
+                  onClick={handleLogout}
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  <span className="hidden sm:inline">Logout</span>
+                </Button>
+              </div>
+            )}
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
               <span className="hidden sm:inline">Online</span>

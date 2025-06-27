@@ -173,8 +173,12 @@ const TaskForm = ({ task, farms, crops, onSuccess, onCancel }) => {
 
     setIsSubmitting(true)
     try {
-      const taskData = {
-        ...formData,
+const taskData = {
+        title: formData.title,
+        type: formData.type,
+        dueDate: formData.dueDate,
+        priority: formData.priority,
+        completed: formData.completed,
         farmId: parseInt(formData.farmId, 10),
         cropId: formData.cropId ? parseInt(formData.cropId, 10) : null
       }
