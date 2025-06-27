@@ -1,0 +1,38 @@
+[
+  {
+    "Id": 1,
+    "farmId": 1,
+    "category": "Seeds",
+    "amount": 245.50,
+    "date": "2024-04-10",
+    "description": "Sweet corn seed - Silver Queen variety",
+    "vendor": "Farmers Supply Co"
+  },
+  {
+    "Id": 2,
+    "farmId": 1,
+    "category": "Fertilizer",
+    "amount": 389.75,
+    "date": "2024-05-15",
+    "description": "10-10-10 balanced fertilizer, 50lb bags",
+    "vendor": "AgriChem Solutions"
+  },
+  {
+    "Id": 3,
+    "farmId": 2,
+    "category": "Equipment",
+    "amount": 125.00,
+    "date": "2024-05-20",
+    "description": "Tractor maintenance and oil change",
+    "vendor": "Johnson Equipment"
+  },
+  {
+    "Id": 4,
+    "farmId": 3,
+    "category": "Labor",
+    "amount": 480.00,
+    "date": "2024-06-01",
+    "description": "Seasonal help for greenhouse work",
+    "vendor": "Farm Labor Services"
+  }
+]

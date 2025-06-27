@@ -1,0 +1,52 @@
+[
+  {
+    "Id": 1,
+    "farmId": 1,
+    "cropId": 1,
+    "title": "Apply fertilizer to corn",
+    "type": "fertilizing",
+    "dueDate": "2024-06-15",
+    "completed": false,
+    "priority": "high"
+  },
+  {
+    "Id": 2,
+    "farmId": 1,
+    "cropId": 2,
+    "title": "Check soybean irrigation",
+    "type": "watering",
+    "dueDate": "2024-06-12",
+    "completed": false,
+    "priority": "medium"
+  },
+  {
+    "Id": 3,
+    "farmId": 2,
+    "cropId": 3,
+    "title": "Wheat harvest preparation",
+    "type": "harvesting",
+    "dueDate": "2024-06-25",
+    "completed": false,
+    "priority": "high"
+  },
+  {
+    "Id": 4,
+    "farmId": 3,
+    "cropId": 4,
+    "title": "Prune tomato plants",
+    "type": "maintenance",
+    "dueDate": "2024-06-10",
+    "completed": true,
+    "priority": "low"
+  },
+  {
+    "Id": 5,
+    "farmId": 1,
+    "cropId": 1,
+    "title": "Scout for corn borers",
+    "type": "inspection",
+    "dueDate": "2024-06-18",
+    "completed": false,
+    "priority": "medium"
+  }
+]

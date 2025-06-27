@@ -1,0 +1,26 @@
+[
+  {
+    "Id": 1,
+    "name": "Green Valley Farm",
+    "location": "Johnson County, KS",
+    "size": 45.5,
+    "unit": "acres",
+    "createdAt": "2024-01-15T08:30:00.000Z"
+  },
+  {
+    "Id": 2,
+    "name": "Sunrise Acres",
+    "location": "Franklin County, KS",
+    "size": 62.3,
+    "unit": "acres",
+    "createdAt": "2024-02-03T10:15:00.000Z"
+  },
+  {
+    "Id": 3,
+    "name": "Heritage Fields",
+    "location": "Douglas County, KS",
+    "size": 38.7,
+    "unit": "acres",
+    "createdAt": "2024-02-20T14:45:00.000Z"
+  }
+]

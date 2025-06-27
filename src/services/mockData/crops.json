@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 1,
+    "farmId": 1,
+    "name": "Sweet Corn",
+    "field": "North Field",
+    "plantingDate": "2024-04-15",
+    "expectedHarvest": "2024-07-20",
+    "status": "active",
+    "notes": "Planted variety Silver Queen, expecting good yield"
+  },
+  {
+    "Id": 2,
+    "farmId": 1,
+    "name": "Soybeans",
+    "field": "South Field",
+    "plantingDate": "2024-05-10",
+    "expectedHarvest": "2024-09-15",
+    "status": "active",
+    "notes": "Round-up ready variety, regular monitoring needed"
+  },
+  {
+    "Id": 3,
+    "farmId": 2,
+    "name": "Winter Wheat",
+    "field": "East Section",
+    "plantingDate": "2023-10-05",
+    "expectedHarvest": "2024-06-30",
+    "status": "planning",
+    "notes": "Hard red winter wheat, good soil conditions"
+  },
+  {
+    "Id": 4,
+    "farmId": 3,
+    "name": "Tomatoes",
+    "field": "Greenhouse A",
+    "plantingDate": "2024-03-20",
+    "expectedHarvest": "2024-06-15",
+    "status": "active",
+    "notes": "Cherokee Purple heirloom variety"
+  }
+]
