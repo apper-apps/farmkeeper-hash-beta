@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import "@/index.css";
 import { routeArray } from "@/config/routes";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/Button";
+import Button from "@/components/atoms/Button";
 
 const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
